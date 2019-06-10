@@ -1,70 +1,81 @@
-with open('words.txt') as file:
-    # words = []
-    # for line in file.readlines():
-    #     words.append(line.strip())
-    words = [line.strip() for line in file.readlines()]
+# Ask user to pick difficulty level
+# Switch between levels
+
+import random
+
+with open("words.txt") as word_file:
+        #create a variable
+        text_file = word_file.read()
+        #create a new variable. This will create a list with lower case words.
+        text_list = text_file.lower().split()
+        # new variable that will randomly choose word from list. Need to loop first
+        # random_word= random.choice(text_list)
+
+# print to test
+# print(text_file)
+# print(text_list)
+# print(random_word)
+
+#for loop iterates through list and add words based on difficulty to assigned variables
 
 easy_words = []
 medium_words = []
 hard_words = []
-for word in words:
-    if len(word) >= 4 and len(word) <= 6:
-        easy_words.append(word)
 
-    if len(word) >= 6 and len(word) <= 8:
-        medium_words.append(word)
+for i in text_list:
+        if len(i) <= 6:
+               easy_words.append(i)
+        if len(i) >= 7 and len(i) <=10:
+                medium_words.append(i)
+        if len(i) >= 11:
+                hard_words.append(i)
 
-    if len(word) >= 8 and len(word) <= 12:
-        hard_words.append(word)
+#variables by difficulty
 
+random_easy_words = random.choice(easy_words)
+random_medium_words = random.choice(medium_words)
+random_hard_words = random.choice (hard_words)
+# print(random_easy_words)
+# print(random_medium_words)
+# print(random_hard_words)
 
-def get_difficulty():
-    """Ask user for level of difficulty (easy, medium, hard).
-    If they give a bad answer, keep asking them."""
+# word_to_guess = random_easy_words
+word_to_guess = random_medium_words
+# word_to_guess = random_hard_words
 
-    while True:
-        difficulty = input("Enter difficulty (easy, medium, or hard): ")
-        if difficulty in ['easy', 'medium', 'hard']:
-            return difficulty
+# print(random_word)
+current_guesses = "_" * len(word_to_guess)
 
+def guess_word(letter, user_guess):
+    if user_guess == letter:
+        return user_guess
+    return "_"
 
-def get_difficulty_recursive():
-    """Ask user for level of difficulty (easy, medium, hard).
-    If they give a bad answer, keep asking them.
-    
-    Don't do this one -- recursive.
-    """
+has_won = False
+wrong_guess = 0
 
-    difficulty = input("Enter difficulty (easy, medium, or hard): ")
-    if difficulty in ['easy', 'medium', 'hard']:
-        return difficulty
+def guess_checker(word_to_guess, current_guesses, user_guess):
+        new_guesses = ""
+        for letter in word_to_guess:
+                if letter in current_guesses != "_":
+                        new_guesses += letter
+                else:
+                        new_guesses += guess_word(letter, user_guess)
+        return new_guesses
+print()
+# print(current_guesses)
 
-    return get_difficulty_recursive()
+while has_won == False and wrong_guess <= 3:
+        user_guess = input("Choose a letter: ").lower()
+        current_guesses = guess_checker(word_to_guess, current_guesses, user_guess)
+        if user_guess not in word_to_guess:
+                wrong_guess +=1
 
+        if "_" not in current_guesses:
+                print("Congratulations! You are the best!")
+                has_won = True 
+        print(current_guesses)
 
-def filter_words_by_difficulty(words, difficulty):
-    """
-    Given a list of words and a difficulty, filter
-    that list to the words that are the right length for
-    that difficulty and return the filtered list.
-    """
-    if difficulty == 'easy':
-        min_len = 4
-        max_len = 6
-    elif difficulty == 'medium':
-        min_len = 6
-        max_len = 8
-    else:
-        min_len = 8
-        max_len = 45
-
-    return [
-        word  # collect word
-        for word in words  # iterate over words
-        # select only words of a certain length
-        if len(word) >= min_len and len(word) <= max_len
-    ]
-
-
-print(len(words))
-print(words[:10])
+if has_won == False:
+        print(f'I am sorry. You lost. The correct word was: {word_to_guess}!')
+  
